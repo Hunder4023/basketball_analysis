@@ -1,1 +1,1 @@
-from .pass_interception_rebound_shot_attemptdetector import PassAndInterceptionReboundShotAttemptDetector
+from .pass_interception_rebound_shot_attemptdetector import PassInterceptionReboundShotAttemptDetector
