@@ -3,6 +3,6 @@ from .ball_tracks_drawer import BallTracksDrawer
 from .court_key_points_drawer import CourtKeypointDrawer
 from .team_ball_control_drawer import TeamBallControlDrawer
 from .frame_number_drawer import FrameNumberDrawer
-from .pass_interception_rebound_shot_attempt_drawer import PassInterceptionDrawer
+from .pass_interception_rebound_shot_attempt_drawer import EventDrawer
 from .tactical_view_drawer import TacticalViewDrawer
 from .speed_and_distance_drawer import SpeedAndDistanceDrawer
