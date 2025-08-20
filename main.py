@@ -5,8 +5,7 @@ from trackers import PlayerTracker, BallTracker
 from team_assigner import TeamAssigner
 from court_keypoint_detector import CourtKeypointDetector
 from ball_aquisition import BallAquisitionDetector
-from pass_and_interception_detector import PassAndInterceptionDetector
-from rebound_detector import ReboundDetector
+from pass_interception_rebound_shot_attempt_detector import PassInterceptionReboundShotAttemptDetector
 from tactical_view_converter import TacticalViewConverter
 from speed_and_distance_calculator import SpeedAndDistanceCalculator
 from drawers import (
@@ -15,8 +14,7 @@ from drawers import (
     CourtKeypointDrawer,
     TeamBallControlDrawer,
     FrameNumberDrawer,
-    PassInterceptionDrawer,
-    ReboundsDrawer,
+    EventDrawer,  # updated drawer
     TacticalViewDrawer,
     SpeedAndDistanceDrawer
 )
@@ -71,7 +69,6 @@ def main():
     # Interpolate Ball Tracks
     ball_tracks = ball_tracker.interpolate_ball_positions(ball_tracks)
    
-
     # Assign Player Teams
     team_assigner = TeamAssigner()
     player_assignment = team_assigner.get_player_teams_across_frames(video_frames,
@@ -84,14 +81,11 @@ def main():
     ball_aquisition_detector = BallAquisitionDetector()
     ball_aquisition = ball_aquisition_detector.detect_ball_possession(player_tracks,ball_tracks)
 
-    # Detect Passes
-    pass_and_interception_detector = PassAndInterceptionDetector()
-    passes = pass_and_interception_detector.detect_passes(ball_aquisition,player_assignment)
-    interceptions = pass_and_interception_detector.detect_interceptions(ball_aquisition,player_assignment)
-
-    # Detect Rebounds
-    rebound_detector = ReboundDetector()
-    rebounds = rebound_detector.detect_rebounds(ball_tracks, ball_aquisition)
+    # Detect Passes, Interceptions, Rebounds, Shot Attempts
+    detector = PassInterceptionReboundShotAttemptDetector()
+    passes, interceptions, rebounds, shot_attempts = detector.detect_all(
+        ball_aquisition, player_assignment, ball_tracks
+    )
 
     # Tactical View
     tactical_view_converter = TacticalViewConverter(
@@ -118,7 +112,7 @@ def main():
     court_keypoint_drawer = CourtKeypointDrawer()
     team_ball_control_drawer = TeamBallControlDrawer()
     frame_number_drawer = FrameNumberDrawer()
-    pass_and_interceptions_drawer = PassInterceptionDrawer()
+    event_drawer = EventDrawer()  # unified drawer
     tactical_view_drawer = TacticalViewDrawer()
     speed_and_distance_drawer = SpeedAndDistanceDrawer()
 
@@ -140,10 +134,12 @@ def main():
                                                         player_assignment,
                                                         ball_aquisition)
 
-    # Draw Passes and Interceptions
-    output_video_frames = pass_and_interceptions_drawer.draw(output_video_frames,
-                                                             passes,
-                                                             interceptions)
+    # Draw Passes, Interceptions, Rebounds, Shot Attempts
+    output_video_frames = event_drawer.draw(output_video_frames,
+                                            passes,
+                                            interceptions,
+                                            rebounds,
+                                            shot_attempts)
     
     # Speed and Distance Drawer
     output_video_frames = speed_and_distance_drawer.draw(output_video_frames,
@@ -168,4 +164,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
