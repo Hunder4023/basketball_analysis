@@ -14,7 +14,7 @@ from drawers import (
     CourtKeypointDrawer,
     TeamBallControlDrawer,
     FrameNumberDrawer,
-    EventDrawer,  # updated drawer
+    EventDrawer,
     TacticalViewDrawer,
     SpeedAndDistanceDrawer
 )
